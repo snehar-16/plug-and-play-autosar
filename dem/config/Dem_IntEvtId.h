@@ -1,38 +1,42 @@
-/*-------------------------------- Arctic Core ------------------------------
- * Copyright (C) 2013, ArcCore AB, Sweden, www.arccore.com.
- * Contact: <contact@arccore.com>
- * 
- * You may ONLY use this file:
- * 1)if you have a valid commercial ArcCore license and then in accordance with  
- * the terms contained in the written license agreement between you and ArcCore, 
- * or alternatively
- * 2)if you follow the terms found in GNU General Public License version 2 as 
- * published by the Free Software Foundation and appearing in the file 
- * LICENSE.GPL included in the packaging of this file or here 
- * <http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt>
- *-------------------------------- Arctic Core -----------------------------*/
-
-
-
-
-
-
-
-
-#warning "This default file may only be used as an example!"
-
 #ifndef DEMINTEVTID_H_
 #define DEMINTEVTID_H_
 
 /*
- * Definition of event IDs used by SW-C
- * NB! Must be unique for each event!
+ * Dem_IntEvtId.h
+ * Kavach DMI — SW-C event IDs
+ * These continue from where Dem_IntErrId.h left off
  */
-enum {
-    // NB! Event IDs below DEM_SWC_EVENT_ID_START not allowed!
-    DEM_EVENT_ID_SWC_START = DEM_EVENT_ID_LAST_FOR_BSW
 
+enum {
+    /* Category 1 — Display */
+    RAIL_EVT_DISPLAY_FAIL        = DEM_EVENT_ID_LAST_FOR_BSW,
+    RAIL_EVT_DISPLAY_PARTIAL,
+
+    /* Category 2 — Communication */
+    RAIL_EVT_COMM_LOSS_LTCAS,
+    RAIL_EVT_COMM_TIMEOUT,
+
+    /* Category 3 — Data validity */
+    RAIL_EVT_LTCAS_DATA_INVALID,
+    RAIL_EVT_LTCAS_DATA_STALE,
+
+    /* Category 4 — Speed */
+    RAIL_EVT_SPEED_SENSOR_FAIL,
+    RAIL_EVT_SPEED_DISPLAY_ERROR,
+
+    /* Category 5 — Movement Authority */
+    RAIL_EVT_MA_INVALID,
+    RAIL_EVT_MA_LOSS,
+
+    /* Category 6 — Mode transition */
+    RAIL_EVT_MODE_TRANSITION_FAIL,
+    RAIL_EVT_MODE_UNKNOWN,
+
+    /* Category 7 — System */
+    RAIL_EVT_POWER_SUPPLY_FAULT,
+    RAIL_EVT_WATCHDOG_TIMEOUT,
+
+    DEM_EVENT_ID_SWC_END
 };
 
-
-#endif /*DEMINTEVTID_H_*/
+#endif /* DEMINTEVTID_H_ */

@@ -273,6 +273,150 @@ abstraction/tpal/TpAl_UDP.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/abstraction/tpal/TpAl_UDP.cpp.s
 .PHONY : abstraction/tpal/TpAl_UDP.cpp.s
 
+dem/config/Dem_LCfg.o: dem/config/Dem_LCfg.c.o
+.PHONY : dem/config/Dem_LCfg.o
+
+# target to build an object file
+dem/config/Dem_LCfg.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.o
+.PHONY : dem/config/Dem_LCfg.c.o
+
+dem/config/Dem_LCfg.i: dem/config/Dem_LCfg.c.i
+.PHONY : dem/config/Dem_LCfg.i
+
+# target to preprocess a source file
+dem/config/Dem_LCfg.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.i
+.PHONY : dem/config/Dem_LCfg.c.i
+
+dem/config/Dem_LCfg.s: dem/config/Dem_LCfg.c.s
+.PHONY : dem/config/Dem_LCfg.s
+
+# target to generate assembly for a file
+dem/config/Dem_LCfg.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.s
+.PHONY : dem/config/Dem_LCfg.c.s
+
+dem/src/Dem.o: dem/src/Dem.c.o
+.PHONY : dem/src/Dem.o
+
+# target to build an object file
+dem/src/Dem.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem.c.o
+.PHONY : dem/src/Dem.c.o
+
+dem/src/Dem.i: dem/src/Dem.c.i
+.PHONY : dem/src/Dem.i
+
+# target to preprocess a source file
+dem/src/Dem.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem.c.i
+.PHONY : dem/src/Dem.c.i
+
+dem/src/Dem.s: dem/src/Dem.c.s
+.PHONY : dem/src/Dem.s
+
+# target to generate assembly for a file
+dem/src/Dem.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem.c.s
+.PHONY : dem/src/Dem.c.s
+
+dem/src/Dem_Debounce.o: dem/src/Dem_Debounce.c.o
+.PHONY : dem/src/Dem_Debounce.o
+
+# target to build an object file
+dem/src/Dem_Debounce.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.o
+.PHONY : dem/src/Dem_Debounce.c.o
+
+dem/src/Dem_Debounce.i: dem/src/Dem_Debounce.c.i
+.PHONY : dem/src/Dem_Debounce.i
+
+# target to preprocess a source file
+dem/src/Dem_Debounce.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.i
+.PHONY : dem/src/Dem_Debounce.c.i
+
+dem/src/Dem_Debounce.s: dem/src/Dem_Debounce.c.s
+.PHONY : dem/src/Dem_Debounce.s
+
+# target to generate assembly for a file
+dem/src/Dem_Debounce.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.s
+.PHONY : dem/src/Dem_Debounce.c.s
+
+dem/src/Dem_Extension.o: dem/src/Dem_Extension.c.o
+.PHONY : dem/src/Dem_Extension.o
+
+# target to build an object file
+dem/src/Dem_Extension.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.o
+.PHONY : dem/src/Dem_Extension.c.o
+
+dem/src/Dem_Extension.i: dem/src/Dem_Extension.c.i
+.PHONY : dem/src/Dem_Extension.i
+
+# target to preprocess a source file
+dem/src/Dem_Extension.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.i
+.PHONY : dem/src/Dem_Extension.c.i
+
+dem/src/Dem_Extension.s: dem/src/Dem_Extension.c.s
+.PHONY : dem/src/Dem_Extension.s
+
+# target to generate assembly for a file
+dem/src/Dem_Extension.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.s
+.PHONY : dem/src/Dem_Extension.c.s
+
+dem/src/Dem_NvM.o: dem/src/Dem_NvM.c.o
+.PHONY : dem/src/Dem_NvM.o
+
+# target to build an object file
+dem/src/Dem_NvM.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.o
+.PHONY : dem/src/Dem_NvM.c.o
+
+dem/src/Dem_NvM.i: dem/src/Dem_NvM.c.i
+.PHONY : dem/src/Dem_NvM.i
+
+# target to preprocess a source file
+dem/src/Dem_NvM.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.i
+.PHONY : dem/src/Dem_NvM.c.i
+
+dem/src/Dem_NvM.s: dem/src/Dem_NvM.c.s
+.PHONY : dem/src/Dem_NvM.s
+
+# target to generate assembly for a file
+dem/src/Dem_NvM.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.s
+.PHONY : dem/src/Dem_NvM.c.s
+
+dem/src/Det.o: dem/src/Det.c.o
+.PHONY : dem/src/Det.o
+
+# target to build an object file
+dem/src/Det.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Det.c.o
+.PHONY : dem/src/Det.c.o
+
+dem/src/Det.i: dem/src/Det.c.i
+.PHONY : dem/src/Det.i
+
+# target to preprocess a source file
+dem/src/Det.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Det.c.i
+.PHONY : dem/src/Det.c.i
+
+dem/src/Det.s: dem/src/Det.c.s
+.PHONY : dem/src/Det.s
+
+# target to generate assembly for a file
+dem/src/Det.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Det.c.s
+.PHONY : dem/src/Det.c.s
+
 hal/Hal_Sim.o: hal/Hal_Sim.cpp.o
 .PHONY : hal/Hal_Sim.o
 
@@ -348,6 +492,24 @@ help:
 	@echo "... abstraction/tpal/TpAl_UDP.o"
 	@echo "... abstraction/tpal/TpAl_UDP.i"
 	@echo "... abstraction/tpal/TpAl_UDP.s"
+	@echo "... dem/config/Dem_LCfg.o"
+	@echo "... dem/config/Dem_LCfg.i"
+	@echo "... dem/config/Dem_LCfg.s"
+	@echo "... dem/src/Dem.o"
+	@echo "... dem/src/Dem.i"
+	@echo "... dem/src/Dem.s"
+	@echo "... dem/src/Dem_Debounce.o"
+	@echo "... dem/src/Dem_Debounce.i"
+	@echo "... dem/src/Dem_Debounce.s"
+	@echo "... dem/src/Dem_Extension.o"
+	@echo "... dem/src/Dem_Extension.i"
+	@echo "... dem/src/Dem_Extension.s"
+	@echo "... dem/src/Dem_NvM.o"
+	@echo "... dem/src/Dem_NvM.i"
+	@echo "... dem/src/Dem_NvM.s"
+	@echo "... dem/src/Det.o"
+	@echo "... dem/src/Det.i"
+	@echo "... dem/src/Det.s"
 	@echo "... hal/Hal_Sim.o"
 	@echo "... hal/Hal_Sim.i"
 	@echo "... hal/Hal_Sim.s"

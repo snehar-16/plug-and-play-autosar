@@ -167,10 +167,94 @@ CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl_File.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl_File.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dcm/plug-and-play-autosar/abstraction/memal/MemAl_File.cpp -o CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl_File.cpp.s
 
+CMakeFiles/autosar_diag.dir/dem/src/Dem.c.o: CMakeFiles/autosar_diag.dir/flags.make
+CMakeFiles/autosar_diag.dir/dem/src/Dem.c.o: ../../dem/src/Dem.c
+CMakeFiles/autosar_diag.dir/dem/src/Dem.c.o: CMakeFiles/autosar_diag.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/autosar_diag.dir/dem/src/Dem.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/autosar_diag.dir/dem/src/Dem.c.o -MF CMakeFiles/autosar_diag.dir/dem/src/Dem.c.o.d -o CMakeFiles/autosar_diag.dir/dem/src/Dem.c.o -c /home/dcm/plug-and-play-autosar/dem/src/Dem.c
+
+CMakeFiles/autosar_diag.dir/dem/src/Dem.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/autosar_diag.dir/dem/src/Dem.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/dcm/plug-and-play-autosar/dem/src/Dem.c > CMakeFiles/autosar_diag.dir/dem/src/Dem.c.i
+
+CMakeFiles/autosar_diag.dir/dem/src/Dem.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/autosar_diag.dir/dem/src/Dem.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/dcm/plug-and-play-autosar/dem/src/Dem.c -o CMakeFiles/autosar_diag.dir/dem/src/Dem.c.s
+
+CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.o: CMakeFiles/autosar_diag.dir/flags.make
+CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.o: ../../dem/src/Dem_Debounce.c
+CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.o: CMakeFiles/autosar_diag.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.o -MF CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.o.d -o CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.o -c /home/dcm/plug-and-play-autosar/dem/src/Dem_Debounce.c
+
+CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/dcm/plug-and-play-autosar/dem/src/Dem_Debounce.c > CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.i
+
+CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/dcm/plug-and-play-autosar/dem/src/Dem_Debounce.c -o CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.s
+
+CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.o: CMakeFiles/autosar_diag.dir/flags.make
+CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.o: ../../dem/src/Dem_NvM.c
+CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.o: CMakeFiles/autosar_diag.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.o -MF CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.o.d -o CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.o -c /home/dcm/plug-and-play-autosar/dem/src/Dem_NvM.c
+
+CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/dcm/plug-and-play-autosar/dem/src/Dem_NvM.c > CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.i
+
+CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/dcm/plug-and-play-autosar/dem/src/Dem_NvM.c -o CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.s
+
+CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.o: CMakeFiles/autosar_diag.dir/flags.make
+CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.o: ../../dem/src/Dem_Extension.c
+CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.o: CMakeFiles/autosar_diag.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.o -MF CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.o.d -o CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.o -c /home/dcm/plug-and-play-autosar/dem/src/Dem_Extension.c
+
+CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/dcm/plug-and-play-autosar/dem/src/Dem_Extension.c > CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.i
+
+CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/dcm/plug-and-play-autosar/dem/src/Dem_Extension.c -o CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.s
+
+CMakeFiles/autosar_diag.dir/dem/src/Det.c.o: CMakeFiles/autosar_diag.dir/flags.make
+CMakeFiles/autosar_diag.dir/dem/src/Det.c.o: ../../dem/src/Det.c
+CMakeFiles/autosar_diag.dir/dem/src/Det.c.o: CMakeFiles/autosar_diag.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object CMakeFiles/autosar_diag.dir/dem/src/Det.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/autosar_diag.dir/dem/src/Det.c.o -MF CMakeFiles/autosar_diag.dir/dem/src/Det.c.o.d -o CMakeFiles/autosar_diag.dir/dem/src/Det.c.o -c /home/dcm/plug-and-play-autosar/dem/src/Det.c
+
+CMakeFiles/autosar_diag.dir/dem/src/Det.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/autosar_diag.dir/dem/src/Det.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/dcm/plug-and-play-autosar/dem/src/Det.c > CMakeFiles/autosar_diag.dir/dem/src/Det.c.i
+
+CMakeFiles/autosar_diag.dir/dem/src/Det.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/autosar_diag.dir/dem/src/Det.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/dcm/plug-and-play-autosar/dem/src/Det.c -o CMakeFiles/autosar_diag.dir/dem/src/Det.c.s
+
+CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.o: CMakeFiles/autosar_diag.dir/flags.make
+CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.o: ../../dem/config/Dem_LCfg.c
+CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.o: CMakeFiles/autosar_diag.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.o -MF CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.o.d -o CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.o -c /home/dcm/plug-and-play-autosar/dem/config/Dem_LCfg.c
+
+CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/dcm/plug-and-play-autosar/dem/config/Dem_LCfg.c > CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.i
+
+CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/dcm/plug-and-play-autosar/dem/config/Dem_LCfg.c -o CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.s
+
 CMakeFiles/autosar_diag.dir/hal/Hal_Sim.cpp.o: CMakeFiles/autosar_diag.dir/flags.make
 CMakeFiles/autosar_diag.dir/hal/Hal_Sim.cpp.o: ../../hal/Hal_Sim.cpp
 CMakeFiles/autosar_diag.dir/hal/Hal_Sim.cpp.o: CMakeFiles/autosar_diag.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/autosar_diag.dir/hal/Hal_Sim.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/autosar_diag.dir/hal/Hal_Sim.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/autosar_diag.dir/hal/Hal_Sim.cpp.o -MF CMakeFiles/autosar_diag.dir/hal/Hal_Sim.cpp.o.d -o CMakeFiles/autosar_diag.dir/hal/Hal_Sim.cpp.o -c /home/dcm/plug-and-play-autosar/hal/Hal_Sim.cpp
 
 CMakeFiles/autosar_diag.dir/hal/Hal_Sim.cpp.i: cmake_force
@@ -190,6 +274,12 @@ autosar_diag_OBJECTS = \
 "CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl.cpp.o" \
 "CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl_Static.cpp.o" \
 "CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl_File.cpp.o" \
+"CMakeFiles/autosar_diag.dir/dem/src/Dem.c.o" \
+"CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.o" \
+"CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.o" \
+"CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.o" \
+"CMakeFiles/autosar_diag.dir/dem/src/Det.c.o" \
+"CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.o" \
 "CMakeFiles/autosar_diag.dir/hal/Hal_Sim.cpp.o"
 
 # External object files for target autosar_diag
@@ -202,10 +292,16 @@ autosar_diag: CMakeFiles/autosar_diag.dir/abstraction/tpal/TpAl_UDP.cpp.o
 autosar_diag: CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl.cpp.o
 autosar_diag: CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl_Static.cpp.o
 autosar_diag: CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl_File.cpp.o
+autosar_diag: CMakeFiles/autosar_diag.dir/dem/src/Dem.c.o
+autosar_diag: CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.o
+autosar_diag: CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.o
+autosar_diag: CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.o
+autosar_diag: CMakeFiles/autosar_diag.dir/dem/src/Det.c.o
+autosar_diag: CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.o
 autosar_diag: CMakeFiles/autosar_diag.dir/hal/Hal_Sim.cpp.o
 autosar_diag: CMakeFiles/autosar_diag.dir/build.make
 autosar_diag: CMakeFiles/autosar_diag.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable autosar_diag"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Linking CXX executable autosar_diag"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/autosar_diag.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -152,3 +152,5 @@ boolean Dem_LookupEventOfUdsDTC(uint32 dtc, EventStatusRecType **eventStatusRec)
 #define DEM_T_TRUE    1
 
 #endif /* DEM_INTERNAL_H_ */
+
+
