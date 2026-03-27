@@ -369,6 +369,7 @@ CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.o: ../../dem/config/Dem_LCfg.c
 
 CMakeFiles/autosar_diag.dir/dem/src/Dem.c.o: ../../dem/src/Dem.c \
   /usr/include/stdc-predef.h \
+  ../../dem/src/impl/Dem_Private_impl.c \
   /usr/include/string.h \
   /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
   /usr/include/features.h \
@@ -429,7 +430,12 @@ CMakeFiles/autosar_diag.dir/dem/src/Dem.c.o: ../../dem/src/Dem.c \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
   /usr/include/x86_64-linux-gnu/bits/floatn.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
-  ../../dem/src/Dem_NvM.h
+  ../../dem/src/Dem_NvM.h \
+  ../../dem/src/impl/Dem_Init_impl.c \
+  ../../dem/src/impl/Dem_Core_impl.c \
+  ../../dem/src/impl/Dem_Filter_impl.c \
+  ../../dem/src/impl/Dem_ExtData_impl.c \
+  ../../dem/src/impl/Dem_Dcm_impl.c
 
 CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.o: ../../dem/src/Dem_Debounce.c \
   /usr/include/stdc-predef.h \
@@ -672,9 +678,17 @@ CMakeFiles/autosar_diag.dir/main.cpp.o: ../../main.cpp \
 
 ../../dem/src/Dem_NvM.c:
 
+../../dem/src/impl/Dem_Dcm_impl.c:
+
+../../dem/src/impl/Dem_Filter_impl.c:
+
 ../../dem/inc/debug.h:
 
+../../dem/src/impl/Dem_ExtData_impl.c:
+
 ../../dem/inc/SchM_Dem.h:
+
+../../dem/src/impl/Dem_Private_impl.c:
 
 ../../dem/src/Dem.c:
 
@@ -703,6 +717,8 @@ CMakeFiles/autosar_diag.dir/main.cpp.o: ../../main.cpp \
 ../../dem/inc/Std_Types.h:
 
 ../../dem/inc/Dem_Types.h:
+
+../../dem/src/impl/Dem_Core_impl.c:
 
 /usr/include/x86_64-linux-gnu/bits/environments.h:
 
@@ -905,6 +921,8 @@ CMakeFiles/autosar_diag.dir/main.cpp.o: ../../main.cpp \
 /usr/include/linux/close_range.h:
 
 /usr/include/pthread.h:
+
+../../dem/src/impl/Dem_Init_impl.c:
 
 /usr/include/sched.h:
 
