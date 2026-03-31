@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /home/dcm/plug-and-play-autosar/build/classic_sim
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -129,12 +139,26 @@ autosar_diag/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/build
 .PHONY : autosar_diag/fast
 
+#=============================================================================
+# Target rules for targets named test_dem_kavach
+
+# Build rule for target.
+test_dem_kavach: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_dem_kavach
+.PHONY : test_dem_kavach
+
+# fast build rule for target.
+test_dem_kavach/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/build
+.PHONY : test_dem_kavach/fast
+
 abstraction/memal/MemAl.o: abstraction/memal/MemAl.cpp.o
 .PHONY : abstraction/memal/MemAl.o
 
 # target to build an object file
 abstraction/memal/MemAl.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/abstraction/memal/MemAl.cpp.o
 .PHONY : abstraction/memal/MemAl.cpp.o
 
 abstraction/memal/MemAl.i: abstraction/memal/MemAl.cpp.i
@@ -143,6 +167,7 @@ abstraction/memal/MemAl.i: abstraction/memal/MemAl.cpp.i
 # target to preprocess a source file
 abstraction/memal/MemAl.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/abstraction/memal/MemAl.cpp.i
 .PHONY : abstraction/memal/MemAl.cpp.i
 
 abstraction/memal/MemAl.s: abstraction/memal/MemAl.cpp.s
@@ -151,6 +176,7 @@ abstraction/memal/MemAl.s: abstraction/memal/MemAl.cpp.s
 # target to generate assembly for a file
 abstraction/memal/MemAl.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/abstraction/memal/MemAl.cpp.s
 .PHONY : abstraction/memal/MemAl.cpp.s
 
 abstraction/memal/MemAl_File.o: abstraction/memal/MemAl_File.cpp.o
@@ -159,6 +185,7 @@ abstraction/memal/MemAl_File.o: abstraction/memal/MemAl_File.cpp.o
 # target to build an object file
 abstraction/memal/MemAl_File.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl_File.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/abstraction/memal/MemAl_File.cpp.o
 .PHONY : abstraction/memal/MemAl_File.cpp.o
 
 abstraction/memal/MemAl_File.i: abstraction/memal/MemAl_File.cpp.i
@@ -167,6 +194,7 @@ abstraction/memal/MemAl_File.i: abstraction/memal/MemAl_File.cpp.i
 # target to preprocess a source file
 abstraction/memal/MemAl_File.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl_File.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/abstraction/memal/MemAl_File.cpp.i
 .PHONY : abstraction/memal/MemAl_File.cpp.i
 
 abstraction/memal/MemAl_File.s: abstraction/memal/MemAl_File.cpp.s
@@ -175,6 +203,7 @@ abstraction/memal/MemAl_File.s: abstraction/memal/MemAl_File.cpp.s
 # target to generate assembly for a file
 abstraction/memal/MemAl_File.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl_File.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/abstraction/memal/MemAl_File.cpp.s
 .PHONY : abstraction/memal/MemAl_File.cpp.s
 
 abstraction/memal/MemAl_Static.o: abstraction/memal/MemAl_Static.cpp.o
@@ -183,6 +212,7 @@ abstraction/memal/MemAl_Static.o: abstraction/memal/MemAl_Static.cpp.o
 # target to build an object file
 abstraction/memal/MemAl_Static.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl_Static.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/abstraction/memal/MemAl_Static.cpp.o
 .PHONY : abstraction/memal/MemAl_Static.cpp.o
 
 abstraction/memal/MemAl_Static.i: abstraction/memal/MemAl_Static.cpp.i
@@ -191,6 +221,7 @@ abstraction/memal/MemAl_Static.i: abstraction/memal/MemAl_Static.cpp.i
 # target to preprocess a source file
 abstraction/memal/MemAl_Static.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl_Static.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/abstraction/memal/MemAl_Static.cpp.i
 .PHONY : abstraction/memal/MemAl_Static.cpp.i
 
 abstraction/memal/MemAl_Static.s: abstraction/memal/MemAl_Static.cpp.s
@@ -199,6 +230,7 @@ abstraction/memal/MemAl_Static.s: abstraction/memal/MemAl_Static.cpp.s
 # target to generate assembly for a file
 abstraction/memal/MemAl_Static.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/abstraction/memal/MemAl_Static.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/abstraction/memal/MemAl_Static.cpp.s
 .PHONY : abstraction/memal/MemAl_Static.cpp.s
 
 abstraction/osal/OsAl_Baremetal.o: abstraction/osal/OsAl_Baremetal.cpp.o
@@ -207,6 +239,7 @@ abstraction/osal/OsAl_Baremetal.o: abstraction/osal/OsAl_Baremetal.cpp.o
 # target to build an object file
 abstraction/osal/OsAl_Baremetal.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/abstraction/osal/OsAl_Baremetal.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/abstraction/osal/OsAl_Baremetal.cpp.o
 .PHONY : abstraction/osal/OsAl_Baremetal.cpp.o
 
 abstraction/osal/OsAl_Baremetal.i: abstraction/osal/OsAl_Baremetal.cpp.i
@@ -215,6 +248,7 @@ abstraction/osal/OsAl_Baremetal.i: abstraction/osal/OsAl_Baremetal.cpp.i
 # target to preprocess a source file
 abstraction/osal/OsAl_Baremetal.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/abstraction/osal/OsAl_Baremetal.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/abstraction/osal/OsAl_Baremetal.cpp.i
 .PHONY : abstraction/osal/OsAl_Baremetal.cpp.i
 
 abstraction/osal/OsAl_Baremetal.s: abstraction/osal/OsAl_Baremetal.cpp.s
@@ -223,6 +257,7 @@ abstraction/osal/OsAl_Baremetal.s: abstraction/osal/OsAl_Baremetal.cpp.s
 # target to generate assembly for a file
 abstraction/osal/OsAl_Baremetal.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/abstraction/osal/OsAl_Baremetal.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/abstraction/osal/OsAl_Baremetal.cpp.s
 .PHONY : abstraction/osal/OsAl_Baremetal.cpp.s
 
 abstraction/tpal/TpAl.o: abstraction/tpal/TpAl.cpp.o
@@ -279,6 +314,7 @@ dem/config/Dem_LCfg.o: dem/config/Dem_LCfg.c.o
 # target to build an object file
 dem/config/Dem_LCfg.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/config/Dem_LCfg.c.o
 .PHONY : dem/config/Dem_LCfg.c.o
 
 dem/config/Dem_LCfg.i: dem/config/Dem_LCfg.c.i
@@ -287,6 +323,7 @@ dem/config/Dem_LCfg.i: dem/config/Dem_LCfg.c.i
 # target to preprocess a source file
 dem/config/Dem_LCfg.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/config/Dem_LCfg.c.i
 .PHONY : dem/config/Dem_LCfg.c.i
 
 dem/config/Dem_LCfg.s: dem/config/Dem_LCfg.c.s
@@ -295,6 +332,7 @@ dem/config/Dem_LCfg.s: dem/config/Dem_LCfg.c.s
 # target to generate assembly for a file
 dem/config/Dem_LCfg.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/config/Dem_LCfg.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/config/Dem_LCfg.c.s
 .PHONY : dem/config/Dem_LCfg.c.s
 
 dem/src/Dem.o: dem/src/Dem.c.o
@@ -303,6 +341,7 @@ dem/src/Dem.o: dem/src/Dem.c.o
 # target to build an object file
 dem/src/Dem.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Dem.c.o
 .PHONY : dem/src/Dem.c.o
 
 dem/src/Dem.i: dem/src/Dem.c.i
@@ -311,6 +350,7 @@ dem/src/Dem.i: dem/src/Dem.c.i
 # target to preprocess a source file
 dem/src/Dem.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Dem.c.i
 .PHONY : dem/src/Dem.c.i
 
 dem/src/Dem.s: dem/src/Dem.c.s
@@ -319,6 +359,7 @@ dem/src/Dem.s: dem/src/Dem.c.s
 # target to generate assembly for a file
 dem/src/Dem.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Dem.c.s
 .PHONY : dem/src/Dem.c.s
 
 dem/src/Dem_Debounce.o: dem/src/Dem_Debounce.c.o
@@ -327,6 +368,7 @@ dem/src/Dem_Debounce.o: dem/src/Dem_Debounce.c.o
 # target to build an object file
 dem/src/Dem_Debounce.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Dem_Debounce.c.o
 .PHONY : dem/src/Dem_Debounce.c.o
 
 dem/src/Dem_Debounce.i: dem/src/Dem_Debounce.c.i
@@ -335,6 +377,7 @@ dem/src/Dem_Debounce.i: dem/src/Dem_Debounce.c.i
 # target to preprocess a source file
 dem/src/Dem_Debounce.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Dem_Debounce.c.i
 .PHONY : dem/src/Dem_Debounce.c.i
 
 dem/src/Dem_Debounce.s: dem/src/Dem_Debounce.c.s
@@ -343,6 +386,7 @@ dem/src/Dem_Debounce.s: dem/src/Dem_Debounce.c.s
 # target to generate assembly for a file
 dem/src/Dem_Debounce.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_Debounce.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Dem_Debounce.c.s
 .PHONY : dem/src/Dem_Debounce.c.s
 
 dem/src/Dem_Extension.o: dem/src/Dem_Extension.c.o
@@ -351,6 +395,7 @@ dem/src/Dem_Extension.o: dem/src/Dem_Extension.c.o
 # target to build an object file
 dem/src/Dem_Extension.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Dem_Extension.c.o
 .PHONY : dem/src/Dem_Extension.c.o
 
 dem/src/Dem_Extension.i: dem/src/Dem_Extension.c.i
@@ -359,6 +404,7 @@ dem/src/Dem_Extension.i: dem/src/Dem_Extension.c.i
 # target to preprocess a source file
 dem/src/Dem_Extension.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Dem_Extension.c.i
 .PHONY : dem/src/Dem_Extension.c.i
 
 dem/src/Dem_Extension.s: dem/src/Dem_Extension.c.s
@@ -367,6 +413,7 @@ dem/src/Dem_Extension.s: dem/src/Dem_Extension.c.s
 # target to generate assembly for a file
 dem/src/Dem_Extension.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_Extension.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Dem_Extension.c.s
 .PHONY : dem/src/Dem_Extension.c.s
 
 dem/src/Dem_NvM.o: dem/src/Dem_NvM.c.o
@@ -375,6 +422,7 @@ dem/src/Dem_NvM.o: dem/src/Dem_NvM.c.o
 # target to build an object file
 dem/src/Dem_NvM.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Dem_NvM.c.o
 .PHONY : dem/src/Dem_NvM.c.o
 
 dem/src/Dem_NvM.i: dem/src/Dem_NvM.c.i
@@ -383,6 +431,7 @@ dem/src/Dem_NvM.i: dem/src/Dem_NvM.c.i
 # target to preprocess a source file
 dem/src/Dem_NvM.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Dem_NvM.c.i
 .PHONY : dem/src/Dem_NvM.c.i
 
 dem/src/Dem_NvM.s: dem/src/Dem_NvM.c.s
@@ -391,6 +440,7 @@ dem/src/Dem_NvM.s: dem/src/Dem_NvM.c.s
 # target to generate assembly for a file
 dem/src/Dem_NvM.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Dem_NvM.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Dem_NvM.c.s
 .PHONY : dem/src/Dem_NvM.c.s
 
 dem/src/Det.o: dem/src/Det.c.o
@@ -399,6 +449,7 @@ dem/src/Det.o: dem/src/Det.c.o
 # target to build an object file
 dem/src/Det.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Det.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Det.c.o
 .PHONY : dem/src/Det.c.o
 
 dem/src/Det.i: dem/src/Det.c.i
@@ -407,6 +458,7 @@ dem/src/Det.i: dem/src/Det.c.i
 # target to preprocess a source file
 dem/src/Det.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Det.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Det.c.i
 .PHONY : dem/src/Det.c.i
 
 dem/src/Det.s: dem/src/Det.c.s
@@ -415,6 +467,7 @@ dem/src/Det.s: dem/src/Det.c.s
 # target to generate assembly for a file
 dem/src/Det.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/dem/src/Det.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/dem/src/Det.c.s
 .PHONY : dem/src/Det.c.s
 
 hal/Hal_Sim.o: hal/Hal_Sim.cpp.o
@@ -441,6 +494,30 @@ hal/Hal_Sim.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/hal/Hal_Sim.cpp.s
 .PHONY : hal/Hal_Sim.cpp.s
 
+home/dcm/Unity/src/unity.o: home/dcm/Unity/src/unity.c.o
+.PHONY : home/dcm/Unity/src/unity.o
+
+# target to build an object file
+home/dcm/Unity/src/unity.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/home/dcm/Unity/src/unity.c.o
+.PHONY : home/dcm/Unity/src/unity.c.o
+
+home/dcm/Unity/src/unity.i: home/dcm/Unity/src/unity.c.i
+.PHONY : home/dcm/Unity/src/unity.i
+
+# target to preprocess a source file
+home/dcm/Unity/src/unity.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/home/dcm/Unity/src/unity.c.i
+.PHONY : home/dcm/Unity/src/unity.c.i
+
+home/dcm/Unity/src/unity.s: home/dcm/Unity/src/unity.c.s
+.PHONY : home/dcm/Unity/src/unity.s
+
+# target to generate assembly for a file
+home/dcm/Unity/src/unity.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/home/dcm/Unity/src/unity.c.s
+.PHONY : home/dcm/Unity/src/unity.c.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -465,6 +542,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autosar_diag.dir/build.make CMakeFiles/autosar_diag.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+tests/unit/test_Dem_Kavach.o: tests/unit/test_Dem_Kavach.c.o
+.PHONY : tests/unit/test_Dem_Kavach.o
+
+# target to build an object file
+tests/unit/test_Dem_Kavach.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/tests/unit/test_Dem_Kavach.c.o
+.PHONY : tests/unit/test_Dem_Kavach.c.o
+
+tests/unit/test_Dem_Kavach.i: tests/unit/test_Dem_Kavach.c.i
+.PHONY : tests/unit/test_Dem_Kavach.i
+
+# target to preprocess a source file
+tests/unit/test_Dem_Kavach.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/tests/unit/test_Dem_Kavach.c.i
+.PHONY : tests/unit/test_Dem_Kavach.c.i
+
+tests/unit/test_Dem_Kavach.s: tests/unit/test_Dem_Kavach.c.s
+.PHONY : tests/unit/test_Dem_Kavach.s
+
+# target to generate assembly for a file
+tests/unit/test_Dem_Kavach.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_dem_kavach.dir/build.make CMakeFiles/test_dem_kavach.dir/tests/unit/test_Dem_Kavach.c.s
+.PHONY : tests/unit/test_Dem_Kavach.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -473,7 +574,9 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... test"
 	@echo "... autosar_diag"
+	@echo "... test_dem_kavach"
 	@echo "... abstraction/memal/MemAl.o"
 	@echo "... abstraction/memal/MemAl.i"
 	@echo "... abstraction/memal/MemAl.s"
@@ -513,9 +616,15 @@ help:
 	@echo "... hal/Hal_Sim.o"
 	@echo "... hal/Hal_Sim.i"
 	@echo "... hal/Hal_Sim.s"
+	@echo "... home/dcm/Unity/src/unity.o"
+	@echo "... home/dcm/Unity/src/unity.i"
+	@echo "... home/dcm/Unity/src/unity.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... tests/unit/test_Dem_Kavach.o"
+	@echo "... tests/unit/test_Dem_Kavach.i"
+	@echo "... tests/unit/test_Dem_Kavach.s"
 .PHONY : help
 
 

@@ -84,3 +84,26 @@ add_executable(autosar_diag
 )
 
 target_link_libraries(autosar_diag pthread)
+
+# ── Unity unit tests ──────────────────────────────────────────
+enable_testing()
+
+if(AUTOSAR_TARGET STREQUAL "SIM")
+    add_executable(test_dem_kavach
+        tests/unit/test_Dem_Kavach.c
+        $ENV{HOME}/Unity/src/unity.c
+        ${DEM_SOURCES}
+        ${OSAL_SOURCES}
+        ${MEMAL_SOURCES}
+    )
+    target_include_directories(test_dem_kavach PRIVATE
+        $ENV{HOME}/Unity/src
+        ${CMAKE_SOURCE_DIR}/abstraction/osal
+        ${CMAKE_SOURCE_DIR}/abstraction/memal
+        ${CMAKE_SOURCE_DIR}/dem/src
+        ${CMAKE_SOURCE_DIR}/dem/inc
+        ${CMAKE_SOURCE_DIR}/dem/config
+    )
+    target_link_libraries(test_dem_kavach pthread)
+    add_test(NAME DEM_Kavach_Tests COMMAND test_dem_kavach)
+endif()

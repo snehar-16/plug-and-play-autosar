@@ -1,78 +1,82 @@
-/*-------------------------------- Arctic Core ------------------------------
- * Copyright (C) 2013, ArcCore AB, Sweden, www.arccore.com.
- * Contact: <contact@arccore.com>
- * 
- * You may ONLY use this file:
- * 1)if you have a valid commercial ArcCore license and then in accordance with  
- * the terms contained in the written license agreement between you and ArcCore, 
- * or alternatively
- * 2)if you follow the terms found in GNU General Public License version 2 as 
- * published by the Free Software Foundation and appearing in the file 
- * LICENSE.GPL included in the packaging of this file or here 
- * <http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt>
- *-------------------------------- Arctic Core -----------------------------*/
-
-
-
-
-
-
-
-
-#warning "This default file may only be used as an example!"
-
 #include "Dem.h"
 
-/*********************
- * DEM Configuration *
- *********************/
+/* Kavach DMI — DEM Link-time Configuration */
 
+/* Event class for all Kavach events — minimal config */
+static const Dem_EventClassType Kavach_EventClass = {
+    .EventDestination    = DEM_DTC_ORIGIN_PRIMARY_MEMORY,
+    .EventPriority       = 1U,
+    .FFPrestorageSupported = FALSE,
+    .AgingAllowed        = TRUE,
+    .OperationCycleRef   = DEM_OPERATION_CYCLE_ID_POWER,
+    .AgingCycleRef       = DEM_OPERATION_CYCLE_ID_POWER,
+    .ConsiderPtoStatus   = FALSE,
+};
 
-/*
- * Classes of extended data record
- */
-
-
-/*
- * Classes of extended data
- */
-
-
-/*
- * Classes of freeze frames
- */
-
-
-/*
- * Classes of PreDebounce algorithms
- */
-
-
-/*
- * Classes of event
- */
-
-
-/*
- * Event parameter list
- */
+/* Event parameter table — one entry per Kavach DMI event */
 const Dem_EventParameterType EventParameter[] = {
-        {
-                .Arc_EOL  = TRUE
-        }
+    /* RAIL_EVT_DISPLAY_FAIL */
+    { .EventClass = &Kavach_EventClass, .EventID = RAIL_EVT_DISPLAY_FAIL,
+      .EventKind = DEM_EVENT_KIND_SWC, .Arc_EOL = FALSE },
+
+    /* RAIL_EVT_DISPLAY_PARTIAL */
+    { .EventClass = &Kavach_EventClass, .EventID = RAIL_EVT_DISPLAY_PARTIAL,
+      .EventKind = DEM_EVENT_KIND_SWC, .Arc_EOL = FALSE },
+
+    /* RAIL_EVT_COMM_LOSS_LTCAS */
+    { .EventClass = &Kavach_EventClass, .EventID = RAIL_EVT_COMM_LOSS_LTCAS,
+      .EventKind = DEM_EVENT_KIND_SWC, .Arc_EOL = FALSE },
+
+    /* RAIL_EVT_COMM_TIMEOUT */
+    { .EventClass = &Kavach_EventClass, .EventID = RAIL_EVT_COMM_TIMEOUT,
+      .EventKind = DEM_EVENT_KIND_SWC, .Arc_EOL = FALSE },
+
+    /* RAIL_EVT_LTCAS_DATA_INVALID */
+    { .EventClass = &Kavach_EventClass, .EventID = RAIL_EVT_LTCAS_DATA_INVALID,
+      .EventKind = DEM_EVENT_KIND_SWC, .Arc_EOL = FALSE },
+
+    /* RAIL_EVT_LTCAS_DATA_STALE */
+    { .EventClass = &Kavach_EventClass, .EventID = RAIL_EVT_LTCAS_DATA_STALE,
+      .EventKind = DEM_EVENT_KIND_SWC, .Arc_EOL = FALSE },
+
+    /* RAIL_EVT_SPEED_SENSOR_FAIL */
+    { .EventClass = &Kavach_EventClass, .EventID = RAIL_EVT_SPEED_SENSOR_FAIL,
+      .EventKind = DEM_EVENT_KIND_SWC, .Arc_EOL = FALSE },
+
+    /* RAIL_EVT_SPEED_DISPLAY_ERROR */
+    { .EventClass = &Kavach_EventClass, .EventID = RAIL_EVT_SPEED_DISPLAY_ERROR,
+      .EventKind = DEM_EVENT_KIND_SWC, .Arc_EOL = FALSE },
+
+    /* RAIL_EVT_MA_INVALID */
+    { .EventClass = &Kavach_EventClass, .EventID = RAIL_EVT_MA_INVALID,
+      .EventKind = DEM_EVENT_KIND_SWC, .Arc_EOL = FALSE },
+
+    /* RAIL_EVT_MA_LOSS */
+    { .EventClass = &Kavach_EventClass, .EventID = RAIL_EVT_MA_LOSS,
+      .EventKind = DEM_EVENT_KIND_SWC, .Arc_EOL = FALSE },
+
+    /* RAIL_EVT_MODE_TRANSITION_FAIL */
+    { .EventClass = &Kavach_EventClass, .EventID = RAIL_EVT_MODE_TRANSITION_FAIL,
+      .EventKind = DEM_EVENT_KIND_SWC, .Arc_EOL = FALSE },
+
+    /* RAIL_EVT_MODE_UNKNOWN */
+    { .EventClass = &Kavach_EventClass, .EventID = RAIL_EVT_MODE_UNKNOWN,
+      .EventKind = DEM_EVENT_KIND_SWC, .Arc_EOL = FALSE },
+
+    /* RAIL_EVT_POWER_SUPPLY_FAULT */
+    { .EventClass = &Kavach_EventClass, .EventID = RAIL_EVT_POWER_SUPPLY_FAULT,
+      .EventKind = DEM_EVENT_KIND_SWC, .Arc_EOL = FALSE },
+
+    /* RAIL_EVT_WATCHDOG_TIMEOUT */
+    { .EventClass = &Kavach_EventClass, .EventID = RAIL_EVT_WATCHDOG_TIMEOUT,
+      .EventKind = DEM_EVENT_KIND_SWC, .Arc_EOL = FALSE },
+
+    /* End of table marker — must be last */
+    { .Arc_EOL = TRUE }
 };
 
-
-/*
- * DEM's config set
- */
 const Dem_ConfigSetType DEM_ConfigSet = {
-        .EventParameter = EventParameter,
+    .EventParameter = EventParameter,
 };
 
-/*
- * DEM's config
- */
-const Dem_ConfigType DEM_Config = {
-    .ConfigSet = &DEM_ConfigSet,
-};
+

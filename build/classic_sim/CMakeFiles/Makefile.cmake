@@ -44,4 +44,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/autosar_diag.dir/DependInfo.cmake"
+  "CMakeFiles/test_dem_kavach.dir/DependInfo.cmake"
   )
