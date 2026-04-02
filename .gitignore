@@ -2,3 +2,12 @@ build/
 *.bin
 *.o
 *.d
+smocip_app
+# Executables
+smocip_app
+*.exe
+*.out
+
+# IDE and OS files
+.vscode/
+.DS_Store
