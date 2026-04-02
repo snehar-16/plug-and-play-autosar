@@ -1,5 +1,0 @@
-/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles/autosar_diag.dir
-/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles/test_dem_kavach.dir
-/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles/test.dir
-/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles/edit_cache.dir
-/home/dcm/plug-and-play-autosar/build/classic_sim/CMakeFiles/rebuild_cache.dir
