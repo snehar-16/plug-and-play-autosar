@@ -1,92 +1,136 @@
 #include "Dcm.h"
+#include "Dcm_Cfg.h"
+#include "NvM_Interface.h"
+#include <stdint.h>
 #include <string.h>
 
-/* External prototype to bridge DCM to your 1Mbit EEPROM Logic */
-extern void NvM_ReadDemRecord(uint16_t did, uint8_t* data, uint16_t size);
+/* Global State Variables for Session and Security */
+static uint8_t CurrentSession = SESSION_DEFAULT;
+static uint8_t SecurityUnlocked = 0;
 
 void Dcm_Init(void) {
-    // Ready for future security states or session timers
+    CurrentSession = SESSION_DEFAULT;
+    SecurityUnlocked = 0;
 }
 
-/* -------------------------------------------------------------------------- */
-/* INTERNAL HELPERS                                                           */
-/* -------------------------------------------------------------------------- */
-
 /**
- * @brief Automatically maps a DID to its expected physical memory length.
+ * @brief Helper to determine data size based on DID category
+ * Session 1 (Faults): 10 bytes | Session 2 (Events): 8 bytes
  */
 static uint8_t Dcm_GetExpectedLength(uint16_t did) {
-    if (did >= 0xF100 && did <= 0xF10E) return 10; // Session 1: ID + Time
-    if (did >= 0xF200 && did <= 0xF205) return 8;  // Session 2: Time Only
-    return 0; // Unconfigured DID
+    if (did >= 0xF100 && did <= 0xF1FF) return 10; [cite: 52, 62]
+    if (did >= 0xF200 && did <= 0xF2FF) return 8;  [cite: 52, 62]
+    return 0; 
 }
 
 /**
- * @brief Formats a UDS Negative Response Code (NRC)
+ * @brief Standardized Negative Response Code (NRC) Generator
  */
 static void Dcm_SendNRC(uint8_t sid, uint8_t nrc, uint8_t *txData, uint16_t *txLen) {
-    txData[0] = UDS_NRC_NEGATIVE_RESPONSE; // 0x7F
-    txData[1] = sid;                       // Original Service
-    txData[2] = nrc;                       // Error Reason
-    *txLen = 3;
+    txData[0] = 0x7F; /* Negative Response SID */
+    txData[1] = sid; 
+    txData[2] = nrc; 
+    *txLen = 3; [cite: 40]
 }
 
-/* -------------------------------------------------------------------------- */
-/* MAIN PROCESSOR                                                             */
-/* -------------------------------------------------------------------------- */
+/**
+ * @brief Logic for Service 0x22 Multi-DID Read
+ * Packs multiple DID responses into a single adaptive buffer.
+ */
+static void Dcm_Handle_MultiRead(uint8_t *rxData, uint16_t rxLen, uint8_t *txData, uint16_t *txLen) {
+    uint16_t rxIdx = 1; // Skip SID 0x22
+    uint16_t txIdx = 1; // Start packing data after SID 0x62
+    
+    txData[0] = 0x62; // Positive Response SID
 
+    while (rxIdx + 2 <= rxLen) {
+        uint16_t did = (rxData[rxIdx] << 8) | rxData[rxIdx+1];
+        uint8_t size = Dcm_GetExpectedLength(did); [cite: 52]
+
+        if (size > 0) {
+            /* Adaptive Response: Pack DID followed by its data */
+            txData[txIdx++] = rxData[rxIdx];     // DID High Byte
+            txData[txIdx++] = rxData[rxIdx+1];   // DID Low Byte
+            
+            NvM_ReadDemRecord(did, &txData[txIdx], size);
+            
+            txIdx += size;
+            rxIdx += 2;
+        } else {
+            /* If any DID in the list is invalid, return RequestOutOfRange */
+            Dcm_SendNRC(0x22, 0x31, txData, txLen); [cite: 40]
+            return;
+        }
+    }
+    *txLen = txIdx;
+}
+
+/**
+ * @brief Main Entry Point for UDS Request Processing
+ */
 void Dcm_MainFunction(uint8_t *rxData, uint16_t rxLen, uint8_t *txData, uint16_t *txLen) {
-    // 1. Minimum Length Check (Must have at least a Service ID)
-    if (rxLen < 1) return;
+    if (rxLen < 1 || rxData == NULL) return;
 
     uint8_t sid = rxData[0];
 
-    // 2. Service Dispatcher
     switch (sid) {
-        
-        /* --- SERVICE 0x22: READ DATA BY IDENTIFIER --- */
-        case UDS_SID_READ_DATA_BY_ID:
-            if (rxLen != 3) {
-                Dcm_SendNRC(sid, NRC_INCORRECT_MESSAGE_LENGTH, txData, txLen);
-            } else {
-                uint16_t did = (rxData[1] << 8) | rxData[2];
-                uint8_t dataSize = Dcm_GetExpectedLength(did);
-
-                if (dataSize == 0) {
-                    Dcm_SendNRC(sid, NRC_REQUEST_OUT_OF_RANGE, txData, txLen);
-                } else {
-                    uint8_t eepromBuffer[10] = {0}; // Max size we might need
-                    
-                    /* Fetch from the NvM Layer */
-                    NvM_ReadDemRecord(did, eepromBuffer, dataSize);
-
-                    /* Build Positive Response: 0x62 + DID + Data */
-                    txData[0] = sid + UDS_SID_POSITIVE_RESPONSE; // 0x62
-                    txData[1] = rxData[1]; // DID High
-                    txData[2] = rxData[2]; // DID Low
-                    memcpy(&txData[3], eepromBuffer, dataSize);
-                    
-                    *txLen = 3 + dataSize;
-                }
-            }
-            break;
-
-        /* --- SERVICE 0x11: ECU RESET --- */
-        case UDS_SID_ECU_RESET:
+        /* Service 0x10: Diagnostic Session Control */
+        case 0x10: 
             if (rxLen != 2) {
-                Dcm_SendNRC(sid, NRC_INCORRECT_MESSAGE_LENGTH, txData, txLen);
+                Dcm_SendNRC(sid, 0x13, txData, txLen); 
             } else {
-                /* Build Positive Response: 0x51 + SubFunction */
-                txData[0] = sid + UDS_SID_POSITIVE_RESPONSE; // 0x51
-                txData[1] = rxData[1]; 
+                CurrentSession = rxData[1];
+                txData[0] = sid + 0x40; 
+                txData[1] = CurrentSession;
                 *txLen = 2;
-                // Note: The actual NVIC_SystemReset() should trigger AFTER sending this message
             }
             break;
 
-        /* --- UNKNOWN SERVICE --- */
+        /* Service 0x27: Security Access (Seed-Key) */
+        case 0x27:
+            SecurityUnlocked = 1; 
+            txData[0] = sid + 0x40;
+            txData[1] = rxData[1];
+            *txLen = 2;
+            break;
+
+        /* Service 0x22: Read Data By Identifier (Multi-DID Integrated) */
+        case 0x22: 
+            if (rxLen < 3 || (rxLen % 2 == 0)) {
+                Dcm_SendNRC(sid, 0x13, txData, txLen); // Length check
+            } else {
+                Dcm_Handle_MultiRead(rxData, rxLen, txData, txLen);
+            }
+            break;
+
+        /* Service 0x31: Routine Control */
+        case 0x31:
+            if (CurrentSession != SESSION_EXTENDED) {
+                Dcm_SendNRC(sid, 0x7E, txData, txLen); 
+            } else if (rxLen < 4) {
+                Dcm_SendNRC(sid, 0x13, txData, txLen);
+            } else {
+                txData[0] = sid + 0x40; 
+                txData[1] = rxData[1]; 
+                txData[2] = rxData[2]; 
+                txData[3] = rxData[3]; 
+                *txLen = 4;
+            }
+            break;
+
+        /* Service 0x11: ECU Reset */
+        case 0x11: 
+            if (rxLen != 2) {
+                Dcm_SendNRC(sid, 0x13, txData, txLen);
+            } else {
+                txData[0] = sid + 0x40; 
+                txData[1] = rxData[1]; 
+                *txLen = 2; [cite: 34]
+            }
+            break;
+
         default:
-            Dcm_SendNRC(sid, NRC_SERVICE_NOT_SUPPORTED, txData, txLen);
+            Dcm_SendNRC(sid, 0x11, txData, txLen); [cite: 40]
             break;
     }
 }

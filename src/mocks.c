@@ -1,22 +1,31 @@
-#include "FreeRTOS.h"
-#include "fault_table.h"
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #include <time.h>
 
-/* Mock 1Mbit EEPROM Storage */
+#ifdef _WIN32
+#include <windows.h>
+#define sleep_ms(x) Sleep(x)
+#else
+#include <unistd.h>
+#define sleep_ms(x) usleep(x * 1000)
+#endif
+
+/* Mock 1Mbit EEPROM Storage (128KB) */
 static uint8_t eeprom_storage[2048][64]; 
 
-/* The missing function the Linker is looking for */
+/* Simulates the STM32 RTC Epoch Provider */
 uint64_t get_epoch_seconds(void) {
     return (uint64_t)time(NULL);
 }
 
+/* Mock Hardware Functions for the PC Demo */
 void EEPROM_Write(uint16_t page, uint16_t offset, uint8_t *data, uint16_t size) {
     if (page < 2048) {
         memcpy(&eeprom_storage[page][offset], data, size);
-        printf("[HAL] Write: Page %d | Offset %d | DevAddr: %s\n", 
-               page, offset, (page >= 1024 ? "0xA2" : "0xA0"));
+        printf("[HAL-SIM] Write: Page %d | Offset %d | Data: ", page, offset);
+        for(int i=0; i<size; i++) printf("%02X ", data[i]);
+        printf("\n");
     }
 }
 
@@ -26,9 +35,15 @@ void EEPROM_Read(uint16_t page, uint16_t offset, uint8_t *data, uint16_t size) {
     }
 }
 
-void NvM_Table_Init(void) { printf("[System] NvM SQL Initialized\n"); }
+/* Initialization Mocks */
+void NvM_Table_Init(void) { printf("[System] Mock EEPROM Storage Initialized\n"); }
 void Dem_Init(void) { printf("[System] DEM Module Initialized\n"); }
-void vTaskDelay(const TickType_t x) { usleep(x * 1000); }
-void vTaskDelete(TaskHandle_t x) { }
-void vTaskStartScheduler(void) { printf("\n[OS] System Running. Ethernet Port 23 (Telnet) Active.\n"); }
-BaseType_t xTaskCreate(void (*f)(void*), const char *n, uint16_t s, void *p, UBaseType_t pr, TaskHandle_t *h) { return 1; }
+
+/* FreeRTOS Mocks for PC Compilation */
+typedef uint32_t TickType_t;
+void vTaskDelay(const TickType_t x) { sleep_ms(x); }
+#include <stdint.h>
+typedef int I2C_HandleTypeDef;
+I2C_HandleTypeDef hi2c1;
+int HAL_I2C_Mem_Write(void* hi, uint16_t dev, uint16_t addr, uint16_t size, uint8_t* d, uint16_t l, uint32_t t) { return 0; }
+int HAL_I2C_Mem_Read(void* hi, uint16_t dev, uint16_t addr, uint16_t size, uint8_t* d, uint16_t l, uint32_t t) { return 0; }
