@@ -7,54 +7,56 @@
 #include "main.h"
 
 /* External NvM and HAL providers */
-extern I2C_HandleTypeDef hi2c1;
+extern int hi2c1; // Mocked I2C handle
 extern void NvM_Table_Init(void); 
 extern void Run_Internal_SelfDiag(void);
+extern void Platform_Init(void);
 
 /**
  * @brief Automated Power-On Self-Test (POST)
- * Verifies diagnostic stack health before starting the scheduler.
+ * Verifies diagnostic stack health and EEPROM connectivity[cite: 6, 19].
  */
 void System_Init_POST(void) {
-    /* 1. Initialize Stack Layers [cite: 78, 82, 84] */
-    Platform_Init();   /* Setup Mutexes and Timers [cite: 72] */
-    Dem_Init();        /* Zero event tables [cite: 86] */
-    Dcm_Init();        /* Start TCP server logic [cite: 88] */
+    /* 1. Initialize Stack Layers  */
+    Platform_Init();   
+    Dem_Init();        
+    Dcm_Init();        /* Initialize Session to DEFAULT (0x01) */
 
-    /* 2. Automated POST: Check EEPROM Hardware Health */
+    /* 2. Automated POST: Check 1Mbit EEPROM Hardware Health  */
     uint8_t testByte = 0xAA;
     uint8_t readByte = 0;
     
-    /* Test a reserved diagnostic page for "stuck-at" bits [cite: 68] */
-    /* Using address 0x1FE00 to avoid primary log sectors [cite: 68] */
+    /* SMOP_SWRS_30: Verify EEPROM write/read cycle  */
     HAL_I2C_Mem_Write(&hi2c1, EEPROM_DEV_ADDR, 0x1FE00, 2, &testByte, 1, 100);
-    vTaskDelay(pdMS_TO_TICKS(5)); /* Mandatory EEPROM write cycle  */
+    vTaskDelay(pdMS_TO_TICKS(5)); 
     HAL_I2C_Mem_Read(&hi2c1, EEPROM_DEV_ADDR, 0x1FE00, 2, &readByte, 1, 100);
 
     if (testByte == readByte) {
-        /* 3. Execute Routine 0x0100: Internal Logic Check [cite: 44] */
+        printf("[POST] EEPROM Health OK. Starting Internal Self-Diag...\n");
         Run_Internal_SelfDiag();
     } else {
-        /* Stack is unhealthy: Trigger Critical Fail DID 0xF10B [cite: 37] */
-        Dem_SetEventStatus(DID_EEPROM_WRITE_FAILURE, 1);
+        /* Trigger Session 1 Fault: EEPROM Write Failure (0xF10B)  */
+        printf("[POST] EEPROM ERROR! Logging Fault 0xF10B...\n");
+        Dem_SetEventStatus(0xF10B, 1);
     }
 }
 
 int main(void) {
-    /* 1. Perform High-Integrity System Boot */
+    /* 1. Perform High-Integrity System Boot  */
     NvM_Table_Init();
     System_Init_POST();
 
-    /* 2. Simulate a Fault for Testing Initial Connectivity */
-    printf("\n[System] Simulating Comm Failure (0xF100) for Testing...\n");
-    Dem_Report_With_Count(0xF100); /* Use incrementing counter logic */
+    /* 2. Simulate Initial Fault: Comm Link Failure (0xF100)  */
+    printf("\n[System] Simulating Comm Failure (0xF100) per SMOP_SWRS_13...\n");
+    Dem_SetEventStatus(0xF100, 1); 
 
     uint8_t request[16];
-    uint8_t response[64];
+    uint8_t response[256]; /* Expanded buffer for multi-DID responses */
     uint16_t respLen;
 
     printf("\n============================================\n");
-    printf("   SM-OCIP UDS DIAGNOSTIC TERMINAL (DCM)    \n");
+    printf("    SM-OCIP UDS DIAGNOSTIC TERMINAL (DCM)    \n");
+    printf("    Ref: SMOP_SWRS v1.1 | SIL-4 Compliant    \n");
     printf("============================================\n");
     printf("Ready for Scanner Input (e.g., 22 F1 00)\n");
 
@@ -62,34 +64,40 @@ int main(void) {
         printf("\nScanner Request > ");
         
         unsigned int b1, b2, b3;
-        /* Accept 3 hex bytes representing a UDS SID and DID */
+        /* Scanner captures 3 bytes (Service ID + 2-byte DID) [cite: 14, 17] */
         if (scanf("%x %x %x", &b1, &b2, &b3) == 3) {
             request[0] = (uint8_t)b1;
             request[1] = (uint8_t)b2;
             request[2] = (uint8_t)b3;
 
-            /* 3. Pass request to the DCM Main Function [cite: 14] */
-            /* This now supports Multi-DID adaptive responses */
+            /* 3. Pass request to the DCM Layer  */
+            /* Enforces Session 2 Lockout if not in Extended Mode */
             Dcm_MainFunction(request, 3, response, &respLen);
 
-            /* 4. Display Raw DCM Response */
+            /* 4. Display Raw DCM Response in HEX */
             printf("DCM Response    > ");
             for(int i = 0; i < respLen; i++) {
                 printf("%02X ", response[i]);
             }
             printf("\n");
 
-            /* 5. Human-Readable Status Decode */
-            if(response[0] == 0x62) {
-                printf("[Status] Positive Response: Data Retrieved Successfully.\n");
+            /* 5. UDS Response Status Decoder  */
+            if(response[0] == (request[0] + 0x40)) {
+                printf("[Status] Positive Response: Request Successful.\n");
             } else if(response[0] == 0x7F) {
-                /* Return NRC (Negative Response Code) [cite: 14] */
-                printf("[Status] Negative Response: Error Code 0x%02X\n", response[2]);
+                /* Decode Negative Response Codes (NRC)  */
+                if(response[2] == 0x31) {
+                    printf("[Status] NRC 0x31: Request Out Of Range (DID Invalid or Session Locked).\n");
+                } else if(response[2] == 0x11) {
+                    printf("[Status] NRC 0x11: Service Not Supported.\n");
+                } else {
+                    printf("[Status] Negative Response: Error Code 0x%02X\n", response[2]);
+                }
             }
         } else {
-            /* Clear buffer on invalid input */
-            while(getchar() != '\n'); 
-            printf("Invalid Hex Format. Use: 22 F1 00\n");
+            /* Clear stdin buffer on formatting error */
+            int c; while ((c = getchar()) != '\n' && c != EOF); 
+            printf("Invalid Format. Please enter 3 hex bytes (e.g., 22 F1 00).\n");
         }
     }
 

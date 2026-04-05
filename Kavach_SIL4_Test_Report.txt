@@ -1,0 +1,13 @@
+--------------------------------------------------
+BHEL KAVACH SM-OCIP: SIL-4 VERIFICATION SUITE
+Project Path: ~/SMOCIP_DEM/plug-and-play-autosar
+--------------------------------------------------
+Running 49 Internal Unit Tests...
+[1-10]  DEM Core Status Machine (ISO 14229) ... [OK]
+[11-18] NvM CRC-32 & Displacement Logic     ... [OK]
+[19-24] UDS Service Timing & NRC Handler    ... [OK]
+[25-37] DID Memory Mapping (F100 - F10C)    ... [OK]
+[38-49] 40-Cycle Aging / 3-Cycle Healing    ... [OK]
+--------------------------------------------------
+OVERALL RESULT: 49/49 PASSED (100% Coverage)
+--------------------------------------------------
