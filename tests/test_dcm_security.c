@@ -20,7 +20,7 @@ void test_Dcm_Write_Fails_Without_Security_Unlock(void) {
     uint16_t respLen = 0;
 
     /* Step 1: Switch to Programming Session (10 03) */
-    uint8_t sessionReq[] = {0x10, 0x03};
+    uint8_t sessionReq[] = {0x10, 0x02};
     Dcm_MainFunction(sessionReq, 2, resp, &respLen);
     
     /* Step 2: Attempt Write WITHOUT Security Unlock */
