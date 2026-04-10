@@ -14,6 +14,16 @@
 #define DCM_TCP_PORT                13400  /* ISO 13400 Standard DoIP Port */
 
 /* --------------------------------------------------------------------------
+ * ISO 14229-1 TIMING PARAMETERS (in milliseconds)
+ * -------------------------------------------------------------------------- */
+#define DCM_TIMING_P2_MAX           50     /* Max time to reply */
+#define DCM_TIMING_P2_STAR_MAX      5000   /* Max time to reply after NRC 78 */
+#define DCM_TIMING_S3_SERVER        5000   /* Session expiration timeout */
+
+/* Expose the timer management function to the OS/Main */
+void Dcm_ManageSessionTimer(uint32_t elapsed_ms);
+
+/* --------------------------------------------------------------------------
  * UDS SESSION DEFINITIONS (ISO 14229-1 Compliant)
  * -------------------------------------------------------------------------- */
 #define DCM_SESSION_DEFAULT         0x01

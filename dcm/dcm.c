@@ -6,11 +6,39 @@
 /* --- Global State --- */
 static uint8_t CurrentSession = 0x01; 
 static uint8_t SecurityLevel = 0x00;  /* 0x00: Locked, 0x01: Unlocked */
+static uint32_t S3_Timer = 0;         /* ISO 14229-1 S3 Server Timer Tracker */
 
 extern uint8_t Dcm_ExecuteRoutine(uint16_t routineId, uint8_t subFunction, uint8_t currentSession, uint8_t securityLevel);
 
 static void Dcm_SendNRC(uint8_t sid, uint8_t nrc, uint8_t *txData, uint16_t *txLen) {
     txData[0] = 0x7F; txData[1] = sid; txData[2] = nrc; *txLen = 3;
+}
+
+/* ==========================================================================
+ * ISO 14229-1 TIMING & BACKGROUND TASKS
+ * ========================================================================== */
+
+/**
+ * @brief Manages the S3 Server Timer for non-default sessions.
+ * Should be called periodically by the OS or Main Loop.
+ */
+void Dcm_ManageSessionTimer(uint32_t elapsed_ms) {
+    /* Only track time if we are in Programming (02) or Extended (03) sessions */
+    if (CurrentSession != 0x01) {
+        S3_Timer += elapsed_ms;
+        
+        if (S3_Timer >= DCM_TIMING_S3_SERVER) {
+            printf("\n\n[ALARM] S3 Server Timer Expired (%d ms)!\n", DCM_TIMING_S3_SERVER);
+            printf("[ALARM] Security Locked. Reverting to Default Session.\n");
+            
+            CurrentSession = 0x01;  /* Revert to Default Session */
+            SecurityLevel = 0x00;   /* Revoke Security Access */
+            S3_Timer = 0;           /* Reset the clock */
+            
+            printf("\nScanner Request > ");
+            fflush(stdout);
+        }
+    }
 }
 
 /* ==========================================================================
@@ -141,17 +169,20 @@ void Dcm_MainFunction(uint8_t *rxData, uint16_t rxLen, uint8_t *txData, uint16_t
     uint8_t sid = rxData[0];
     uint8_t isAllowed = 0;
 
+    /* ISO 14229-1: Any valid diagnostic request resets the S3 Server Timer */
+    S3_Timer = 0;
+
     switch (CurrentSession) {
         case 0x01: /* Default */
             if (sid == 0x10 || sid == 0x11 || sid == 0x19 || sid == 0x22 || sid == 0x3E) isAllowed = 1;
             break;
         case 0x02: /* Programming */
             if (sid == 0x10 || sid == 0x11 || sid == 0x27 || sid == 0x2E ||  sid == 0x31 || 
-                sid == 0x34 || sid == 0x36 || sid == 0x37) isAllowed = 1;
+                sid == 0x34 || sid == 0x36 || sid == 0x37 || sid == 0x3E) isAllowed = 1;
             break;
         case 0x03: /* Extended */
             if (sid == 0x10 || sid == 0x22 || sid == 0x27 || sid == 0x2E || 
-                sid == 0x2F || sid == 0x31 || sid == 0x85) isAllowed = 1;
+                sid == 0x2F || sid == 0x31 || sid == 0x85 || sid == 0x3E) isAllowed = 1;
             break;
     }
 
@@ -178,4 +209,8 @@ void Dcm_MainFunction(uint8_t *rxData, uint16_t rxLen, uint8_t *txData, uint16_t
     }
 }
 
-void Dcm_Init(void) { CurrentSession = 0x01; SecurityLevel = 0x00; }
+void Dcm_Init(void) { 
+    CurrentSession = 0x01; 
+    SecurityLevel = 0x00; 
+    S3_Timer = 0; 
+}

@@ -1,0 +1,33 @@
+smocip_kavach_release  :
+section                size    addr
+.interp                  28     792
+.note.gnu.property       48     824
+.note.gnu.build-id       36     872
+.note.ABI-tag            32     908
+.gnu.hash                40     944
+.dynsym                 432     984
+.dynstr                 249    1416
+.gnu.version             36    1666
+.gnu.version_r           80    1704
+.rela.dyn               840    1784
+.rela.plt               264    2624
+.init                    27    4096
+.plt                    192    4128
+.plt.got                 16    4320
+.plt.sec                176    4336
+.text                  9152    4512
+.fini                    13   13664
+.rodata                2980   16384
+.eh_frame_hdr           380   19364
+.eh_frame              1484   19744
+.init_array               8   27568
+.fini_array               8   27576
+.data.rel.ro            416   27584
+.dynamic                496   28000
+.got                    152   28496
+.data                    17   28672
+.bss                 155176   28704
+.comment                 45       0
+Total                172823
+
+

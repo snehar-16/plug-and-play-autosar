@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include <stdlib.h> /* Added for strtol (Dynamic Parsing) */
+#include <stdlib.h>     /* Added for strtol (Dynamic Parsing) */
+#include <sys/select.h> /* Added for non-blocking terminal input */
+#include <sys/time.h>   /* Added for timer */
+#include <unistd.h>     /* Added for STDIN_FILENO */
 
 /* --- Explicit Relative Paths --- */
 #include "../dcm/Dcm_Cfg.h"
@@ -68,46 +71,77 @@ int main(void) {
     printf("  - Tester Pres: 3E 00\n");
     printf("=======================================================\n");
 
+    /* Initial Prompt */
+    printf("\nScanner Request > ");
+    fflush(stdout);
+
     while(1) {
         Platform_WdgTrigger();
 
-        printf("\nScanner Request > ");
-        
-        if (fgets(inputLine, sizeof(inputLine), stdin) != NULL) {
-            if (inputLine[0] == '\n') continue; /* Ignore empty "Enter" presses */
-            
-            uint16_t reqLen = 0;
-            char *token = strtok(inputLine, " \n");
-            
-            /* DYNAMIC PARSER: Reads however many bytes you type */
-            while (token != NULL && reqLen < 256) {
-                request[reqLen++] = (uint8_t)strtol(token, NULL, 16);
-                token = strtok(NULL, " \n");
-            }
+        fd_set readfds;
+        struct timeval tv;
 
-            if (reqLen > 0) {
-                respLen = 0;
-                Dcm_MainFunction(request, reqLen, response, &respLen);
+        FD_ZERO(&readfds);
+        FD_SET(STDIN_FILENO, &readfds);
 
-                if (respLen > 0) {
-                    printf("DCM Response    > ");
-                    for(int i = 0; i < respLen; i++) printf("%02X ", response[i]);
-                    printf("\n");
+        /* Wait for user input for exactly 100 milliseconds */
+        tv.tv_sec = 0;
+        tv.tv_usec = 100000; 
 
-                    if(response[0] == (request[0] + 0x40)) {
-                        printf("[Status] Positive Response: Request Successful.\n");
-                    } else if(response[0] == 0x7F) {
-                        switch(response[2]) {
-                            case 0x11: printf("[Status] NRC 0x11: Service Not Supported.\n"); break;
-                            case 0x12: printf("[Status] NRC 0x12: SubFunction Not Supported.\n"); break;
-                            case 0x13: printf("[Status] NRC 0x13: Incorrect Message Length.\n"); break;
-                            case 0x31: printf("[Status] NRC 0x31: Request Out Of Range (Locked/Invalid).\n"); break;
-                            case 0x33: printf("[Status] NRC 0x33: Security Access Denied.\n"); break;
-                            case 0x7F: printf("[Status] NRC 0x7F: Service Not Supported in Active Session.\n"); break;
-                            default:   printf("[Status] Negative Response: Error Code 0x%02X\n", response[2]); break;
+        int retval = select(STDIN_FILENO + 1, &readfds, NULL, NULL, &tv);
+
+        if (retval == -1) {
+            perror("select()");
+            break;
+        } else if (retval == 0) {
+            /* No keyboard input for 100ms. Tick the UDS Session Timer! */
+            Dcm_ManageSessionTimer(100); 
+        } else {
+            /* User typed something and pressed Enter */
+            if (fgets(inputLine, sizeof(inputLine), stdin) != NULL) {
+                if (inputLine[0] == '\n') {
+                    /* Reprompt cleanly if they just hit Enter */
+                    printf("Scanner Request > ");
+                    fflush(stdout);
+                    continue; 
+                }
+                
+                uint16_t reqLen = 0;
+                char *token = strtok(inputLine, " \n");
+                
+                /* DYNAMIC PARSER: Reads however many bytes you type */
+                while (token != NULL && reqLen < 256) {
+                    request[reqLen++] = (uint8_t)strtol(token, NULL, 16);
+                    token = strtok(NULL, " \n");
+                }
+
+                if (reqLen > 0) {
+                    respLen = 0;
+                    Dcm_MainFunction(request, reqLen, response, &respLen);
+
+                    if (respLen > 0) {
+                        printf("DCM Response    > ");
+                        for(int i = 0; i < respLen; i++) printf("%02X ", response[i]);
+                        printf("\n");
+
+                        /* Decode NRC for easier debugging */
+                        if(response[0] == (request[0] + 0x40)) {
+                            printf("[Status] Positive Response: Request Successful.\n");
+                        } else if(response[0] == 0x7F) {
+                            switch(response[2]) {
+                                case 0x11: printf("[Status] NRC 0x11: Service Not Supported.\n"); break;
+                                case 0x12: printf("[Status] NRC 0x12: SubFunction Not Supported.\n"); break;
+                                case 0x13: printf("[Status] NRC 0x13: Incorrect Message Length.\n"); break;
+                                case 0x31: printf("[Status] NRC 0x31: Request Out Of Range (Locked/Invalid).\n"); break;
+                                case 0x33: printf("[Status] NRC 0x33: Security Access Denied.\n"); break;
+                                case 0x7F: printf("[Status] NRC 0x7F: Service Not Supported in Active Session.\n"); break;
+                                default:   printf("[Status] Negative Response: Error Code 0x%02X\n", response[2]); break;
+                            }
                         }
                     }
                 }
+                printf("\nScanner Request > ");
+                fflush(stdout);
             }
         }
     }
