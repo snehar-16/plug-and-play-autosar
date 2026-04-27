@@ -1,149 +1,172 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>     /* Added for strtol (Dynamic Parsing) */
-#include <sys/select.h> /* Added for non-blocking terminal input */
-#include <sys/time.h>   /* Added for timer */
-#include <unistd.h>     /* Added for STDIN_FILENO */
+/* USER CODE BEGIN Header */
+/**
+ * @file           : main.c
+ * @brief          : Main program body (STM32 FreeRTOS Target)
+ * @project        : SM-OCIP UDS DIAGNOSTIC TERMINAL (v2.0)
+ * @compliance     : MISRA C:2012, SIL-4 
+ */
+/* USER CODE END Header */
 
-/* --- Explicit Relative Paths --- */
+/* Includes ------------------------------------------------------------------*/
+#include "main.h"
+#include "cmsis_os.h" /* STM32 FreeRTOS Wrapper */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+
+/* USER CODE BEGIN Includes */
 #include "../dcm/Dcm_Cfg.h"
 #include "../platform/platform_api.h"
 #include "../dem/dem_event_logger.h"
+#include "../dem/dem_core.h" 
+#include "../dcm/dcm.h"
+/* USER CODE END Includes */
 
-/* External Function Declarations */
-extern void Platform_Init(void); 
-extern void Platform_RTC_Init(void);
-extern void Platform_WdgTrigger(void);
-extern void Dem_Init(void);
-extern void Dcm_Init(void);
-extern void Dem_SetEventStatus(uint16_t did, uint8_t isFailed);
-extern void Dcm_MainFunction(uint8_t *rxData, uint16_t rxLen, uint8_t *txData, uint16_t *txLen);
-extern uint8_t Dem_Nvm_Load(uint8_t *outData, uint16_t length);
+/* Private variables ---------------------------------------------------------*/
+I2C_HandleTypeDef hi2c1;
+/* USER CODE BEGIN PV */
 
-static uint8_t eepromBuffer[4096];
+/* FreeRTOS Handles */
+TaskHandle_t DemTaskHandle = NULL;
+TaskHandle_t DcmTaskHandle = NULL;
+QueueHandle_t UdsRxQueue = NULL;
+
+/* Structure to pass incoming UDS payloads from CAN/Ethernet to the DCM Task */
+typedef struct {
+    uint8_t data[256];
+    uint16_t length;
+} UdsMessage_t;
+
+/* USER CODE END PV */
+
+/* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_I2C1_Init(void);
+
+/* USER CODE BEGIN PFP */
+void Start_Dem_Task(void *argument);
+void Start_Dcm_Task(void *argument);
+void System_Init_POST(void);
+/* USER CODE END PFP */
 
 /**
- * @brief Automated Power-On Self-Test (POST)
+  * @brief  The application entry point.
+  */
+int main(void)
+{
+  /* MCU Configuration--------------------------------------------------------*/
+  HAL_Init();
+  SystemClock_Config();
+
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_I2C1_Init();
+
+  /* USER CODE BEGIN 2 */
+  
+  /* 1. Run our Power-On Self-Test & Diagnostic Initialization */
+  System_Init_POST();
+
+  /* 2. Create the Queue to receive UDS packets from the hardware interface (e.g., CAN Rx Interrupt) */
+  UdsRxQueue = xQueueCreate(5U, sizeof(UdsMessage_t));
+
+  /* 3. Create SIL-4 Deterministic FreeRTOS Tasks */
+  
+  /* DEM Task: Highest Priority, strictly runs every 10ms */
+  xTaskCreate(Start_Dem_Task, "DemTask", 256U, NULL, osPriorityRealtime, &DemTaskHandle);
+  
+  /* DCM Task: Normal Priority, waits for network requests */
+  xTaskCreate(Start_Dcm_Task, "DcmTask", 512U, NULL, osPriorityNormal, &DcmTaskHandle);
+
+  /* USER CODE END 2 */
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
+  for(;;)
+  {
+      /* MISRA compliant infinite loop trap */
+  }
+}
+
+/* USER CODE BEGIN 4 */
+
+/**
+ * @brief Automated Power-On Self-Test (POST) for Bare-Metal Target
  */
 void System_Init_POST(void) {
-    printf("[POST] 1. Initializing Platform Hardware Abstraction...\n");
+    uint8_t eepromBuffer[4096] = {0U};
+
     Platform_Init();   
-    printf("[POST] 2. Initializing Real-Time Clock (RTC)...\n");
     Platform_RTC_Init();
-    printf("[POST] 3. Initializing DEM RAM Structures...\n");
     Dem_Init();        
-    printf("[POST] 4. Executing IEC-61508 3-Step Boot Fallback...\n");
-    if (Dem_Nvm_Load(eepromBuffer, sizeof(eepromBuffer)) == PLATFORM_OK) {
-        printf("[POST] NvM Load SUCCESS: EEPROM data safely restored to RAM.\n");
-    } else {
-        printf("[POST] NvM Load FAILED: Starting Clean. Logging Fault 0xF10B...\n");
-        Dem_SetEventStatus(0xF10B, 1); 
+    
+    /* Executing IEC-61508 3-Step Boot Fallback */
+    if (Dem_Nvm_Load(eepromBuffer, (uint16_t)sizeof(eepromBuffer)) != PLATFORM_OK) {
+        /* NvM Load FAILED: Starting Clean. Logging Fault 0xF10B */
+        Dem_SetEventStatus(0xF10BU, 1U); 
     }
-    printf("[POST] 5. Initializing DCM (UDS Stack Ready)...\n");
+    
     Dcm_Init();        
-    printf("[POST] 6. Initializing Circular Black Box Logger...\n");
     DEM_EventLogger_Init();
 }
 
-int main(void) {
-    System_Init_POST();
+/**
+ * @brief DEM Cyclic Executive Task (10ms)
+ * Evaluates debounce timers, manages fault aging, and triggers EEPROM writes.
+ */
+void Start_Dem_Task(void *argument) {
+    (void)argument; /* MISRA: Acknowledge unused parameter */
+    
+    TickType_t xLastWakeTime;
+    const TickType_t xFrequency = pdMS_TO_TICKS(10U);
 
-    /* Simulate Initial Fault */
-    printf("\n[System] Simulating Comm Failure (0xF100) per SMOP_SWRS_13...\n");
-    Dem_SetEventStatus(0xF100, 1); 
+    /* Initialize the xLastWakeTime variable with the current time. */
+    xLastWakeTime = xTaskGetTickCount();
 
-    uint8_t request[256]; /* Expanded buffer for variable length payloads */
-    uint8_t response[256]; 
-    uint16_t respLen = 0;
-    char inputLine[512];
+    for(;;) {
+        /* Wait for the exact 10ms cycle */
+        vTaskDelayUntil(&xLastWakeTime, xFrequency);
 
-    /* Integrated Terminal Header */
-    printf("\n=======================================================\n");
-    printf("        SM-OCIP UDS DIAGNOSTIC TERMINAL (v2.0)         \n");
-    printf("        Ref: SMOP_SWRS v1.1 | ISO 14229-1 SIL-4        \n");
-    printf("=======================================================\n");
-    printf(" Sessions: 10 01 (Default) | 10 02 (Prog) | 10 03 (Ext)\n");
-    printf(" Examples:\n");
-    printf("  - Read Fault : 22 F1 00\n");
-    printf("  - Read Audit : 22 F2 00 (Requires Session 03)\n");
-    printf("  - IO Control : 2F 01 03 (Requires Session 03 + Unlocked)\n");
-    printf("  - Tester Pres: 3E 00\n");
-    printf("=======================================================\n");
-
-    /* Initial Prompt */
-    printf("\nScanner Request > ");
-    fflush(stdout);
-
-    while(1) {
+        /* Tick the UDS S3 Timer (10ms elapsed) */
+        Dcm_ManageSessionTimer(10U);
+        
+        /* Run Core DEM Logic */
+        Dem_MainFunction();
+        
+        /* Feed the SIL-4 Hardware Watchdog */
         Platform_WdgTrigger();
+    }
+}
 
-        fd_set readfds;
-        struct timeval tv;
+/**
+ * @brief DCM Event-Driven Task
+ * Sleeps efficiently until a UDS packet arrives via the queue.
+ */
+void Start_Dcm_Task(void *argument) {
+    (void)argument;
+    
+    UdsMessage_t rxMsg;
+    uint8_t txBuffer[256] = {0U};
+    uint16_t txLen = 0U;
 
-        FD_ZERO(&readfds);
-        FD_SET(STDIN_FILENO, &readfds);
-
-        /* Wait for user input for exactly 100 milliseconds */
-        tv.tv_sec = 0;
-        tv.tv_usec = 100000; 
-
-        int retval = select(STDIN_FILENO + 1, &readfds, NULL, NULL, &tv);
-
-        if (retval == -1) {
-            perror("select()");
-            break;
-        } else if (retval == 0) {
-            /* No keyboard input for 100ms. Tick the UDS Session Timer! */
-            Dcm_ManageSessionTimer(100); 
-        } else {
-            /* User typed something and pressed Enter */
-            if (fgets(inputLine, sizeof(inputLine), stdin) != NULL) {
-                if (inputLine[0] == '\n') {
-                    /* Reprompt cleanly if they just hit Enter */
-                    printf("Scanner Request > ");
-                    fflush(stdout);
-                    continue; 
-                }
-                
-                uint16_t reqLen = 0;
-                char *token = strtok(inputLine, " \n");
-                
-                /* DYNAMIC PARSER: Reads however many bytes you type */
-                while (token != NULL && reqLen < 256) {
-                    request[reqLen++] = (uint8_t)strtol(token, NULL, 16);
-                    token = strtok(NULL, " \n");
-                }
-
-                if (reqLen > 0) {
-                    respLen = 0;
-                    Dcm_MainFunction(request, reqLen, response, &respLen);
-
-                    if (respLen > 0) {
-                        printf("DCM Response    > ");
-                        for(int i = 0; i < respLen; i++) printf("%02X ", response[i]);
-                        printf("\n");
-
-                        /* Decode NRC for easier debugging */
-                        if(response[0] == (request[0] + 0x40)) {
-                            printf("[Status] Positive Response: Request Successful.\n");
-                        } else if(response[0] == 0x7F) {
-                            switch(response[2]) {
-                                case 0x11: printf("[Status] NRC 0x11: Service Not Supported.\n"); break;
-                                case 0x12: printf("[Status] NRC 0x12: SubFunction Not Supported.\n"); break;
-                                case 0x13: printf("[Status] NRC 0x13: Incorrect Message Length.\n"); break;
-                                case 0x31: printf("[Status] NRC 0x31: Request Out Of Range (Locked/Invalid).\n"); break;
-                                case 0x33: printf("[Status] NRC 0x33: Security Access Denied.\n"); break;
-                                case 0x7F: printf("[Status] NRC 0x7F: Service Not Supported in Active Session.\n"); break;
-                                default:   printf("[Status] Negative Response: Error Code 0x%02X\n", response[2]); break;
-                            }
-                        }
-                    }
-                }
-                printf("\nScanner Request > ");
-                fflush(stdout);
+    for(;;) {
+        /* Block indefinitely until a UDS message is pushed to the queue by a CAN/Ethernet interrupt */
+        if (xQueueReceive(UdsRxQueue, &rxMsg, portMAX_DELAY) == pdPASS) {
+            
+            txLen = 0U;
+            
+            /* Process the incoming request */
+            Dcm_MainFunction(rxMsg.data, rxMsg.length, txBuffer, &txLen);
+            
+            /* If a response was generated, send it back to the network layer */
+            if (txLen > 0U) {
+                /* e.g., CAN_Transmit(txBuffer, txLen); */
             }
         }
     }
-    return 0;
 }
+
+/* USER CODE END 4 */

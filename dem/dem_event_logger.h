@@ -15,6 +15,9 @@
 #define DEM_TYPE_FAIL   (0U)
 #define DEM_TYPE_PASS   (1U)
 
+/* --------------------------------------------------------------------------
+ * DATA STRUCTURES
+ * -------------------------------------------------------------------------- */
 typedef struct {
     uint16_t slno;
     uint32_t timestamp;
@@ -39,7 +42,18 @@ typedef struct {
     char     eventName[24];
 } DEM_EventRecordB_t;
 
+/* --------------------------------------------------------------------------
+ * EXTERNAL FUNCTION PROTOTYPES
+ * -------------------------------------------------------------------------- */
 void DEM_EventLogger_Init(void);
+
 void DEM_EventLogger_Write(uint16_t eventId, uint8_t priority, uint8_t source, uint8_t type, uint32_t dtcNumber, uint8_t udsStatus);
+
 uint16_t DEM_EventLogger_ReadAll(DEM_EventRecordA_t *out, uint16_t max);
-#endif
+
+/* MISRA: Added missing prototypes required by Rule 8.4 */
+uint8_t DEM_EventLogger_QueryById(uint16_t eventId, DEM_EventRecordB_t *out);
+
+void Dem_EventLogger_Clear(void);
+
+#endif /* DEM_EVENT_LOGGER_H */
