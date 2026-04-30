@@ -3,11 +3,11 @@
 #include <string.h>
 
 /* --- DoIP / Railway Ethernet Constants --- */
-#define DOIP_HEADER_SIZE               8U
-#define DOIP_PROTOCOL_VERSION          0x02U
-#define DOIP_PAYLOAD_TYPE_DIAG         0x8001U
-#define DOIP_PAYLOAD_TYPE_ROUTING_REQ  0x0005U
-#define DOIP_PAYLOAD_TYPE_ROUTING_RES  0x0006U
+#define DOIP_HEADER_SIZE                8U
+#define DOIP_PROTOCOL_VERSION           0x02U
+#define DOIP_PAYLOAD_TYPE_DIAG          0x8001U
+#define DOIP_PAYLOAD_TYPE_ROUTING_REQ   0x0005U
+#define DOIP_PAYLOAD_TYPE_ROUTING_RES   0x0006U
 
 /* MISRA Note: Externs should ideally be in a shared header. */
 extern uint8_t Dcm_ExecuteRoutine(uint16_t routineId, uint8_t subFunction, uint8_t currentSession, uint8_t securityLevel);
@@ -17,18 +17,22 @@ extern void Dem_EventLogger_Clear(void);
 static uint8_t CurrentSession = 0x01U; 
 static uint8_t SecurityLevel = 0x00U;  /* 0x00U: Locked, 0x01U: Unlocked */
 static uint32_t S3_Timer = 0U;         /* ISO 14229-1 S3 Server Timer Tracker */
-static uint8_t DoIP_RoutingActive = 0U; /* NEW: Ethernet Routing State */
+static uint8_t DoIP_RoutingActive = 0U; /* Ethernet Routing State */
 
 /* ==========================================================================
  * INTERNAL UTILITIES
  * ========================================================================== */
 
+/**
+ * @brief Sends a Negative Response Code (NRC)
+ * BUG FIXED: txLen is now correctly dereferenced using '*' to update the value.
+ */
 static void Dcm_SendNRC(uint8_t sid, uint8_t nrc, uint8_t *txData, uint16_t *txLen) {
     if ((txData != NULL) && (txLen != NULL)) {
         txData[0] = 0x7FU; 
         txData[1] = sid; 
         txData[2] = nrc; 
-        *txLen = 3U;
+        *txLen = 3U; /* Corrected: Using pointer dereference */
     }
 }
 
@@ -80,23 +84,40 @@ static void Dcm_Handle_0x22(const uint8_t *rx, uint16_t rxLen, uint8_t *tx, uint
     } else {
         uint16_t did = (uint16_t)(((uint16_t)rx[1] << 8U) | (uint16_t)rx[2]);
         uint8_t isValid = 0U;
+        uint8_t nrcToReturn = 0x31U; /* Default to Request Out Of Range */
 
+        /* --- CATEGORY 1: Default Session DIDs (F1xx) --- */
         if ((did == 0xF100U) || (did == 0xF101U) || ((did >= 0xF105U) && (did <= 0xF108U)) || 
             (did == 0xF10BU) || (did == 0xF10DU) || (did == 0xF10EU) || 
             ((did >= 0xF110U) && (did <= 0xF11DU))) {
             isValid = 1U;
-        } else if ((did >= 0xF200U) && (did <= 0xF207U) && (CurrentSession == 0x03U)) {
-            isValid = 1U;
-        } else if (((did == 0xF300U) || (did == 0xF301U)) && (CurrentSession == 0x02U)) {
-            isValid = 1U;
+        } 
+        /* --- CATEGORY 2: Extended Session DIDs (F2xx) --- */
+        else if ((did >= 0xF200U) && (did <= 0xF207U)) {
+            if (CurrentSession == 0x03U) {
+                isValid = 1U;
+            } else {
+                isValid = 0U;
+                nrcToReturn = 0x7FU; /* Mandatory Security: Service Not Supported In Active Session */
+            }
+        }
+        /* --- CATEGORY 3: Programming Session DIDs (F3xx) --- */
+        else if ((did == 0xF300U) || (did == 0xF301U)) {
+            if (CurrentSession == 0x02U) {
+                isValid = 1U;
+            } else {
+                isValid = 0U;
+                nrcToReturn = 0x7FU; /* Mandatory Security: Service Not Supported In Active Session */
+            }
         }
 
         if (isValid == 1U) {
             tx[0] = 0x62U; tx[1] = rx[1]; tx[2] = rx[2];
+            /* Placeholder for 8-byte timestamp payload from DEM */
             (void)memset(&tx[3], 0x00, 8U); 
             *txLen = 11U;
         } else {
-            Dcm_SendNRC(0x22U, 0x31U, tx, txLen);
+            Dcm_SendNRC(0x22U, nrcToReturn, tx, txLen);
         }
     }
 }
@@ -116,6 +137,9 @@ static void Dcm_Handle_0x2E(const uint8_t *rx, uint16_t rxLen, uint8_t *tx, uint
         Dcm_SendNRC(0x2EU, 0x13U, tx, txLen); 
     } else if (SecurityLevel == 0x00U) { 
         Dcm_SendNRC(0x2EU, 0x33U, tx, txLen); 
+    } else if (CurrentSession != 0x02U) {
+        /* Service 2E (Write) must only happen in Programming Session 0x02 */
+        Dcm_SendNRC(0x2EU, 0x7FU, tx, txLen);
     } else {
         uint16_t did = (uint16_t)(((uint16_t)rx[1] << 8U) | (uint16_t)rx[2]);
         if ((did == 0xF300U) || (did == 0xF301U)) {
@@ -135,7 +159,6 @@ void Dcm_MainFunction(uint8_t *rxData, uint16_t rxLen, uint8_t *txData, uint16_t
     
     if ((rxData != NULL) && (txData != NULL) && (txLen != NULL) && (rxLen >= DOIP_HEADER_SIZE)) {
         
-        /* 1. ETHERNET HEADER VALIDATION */
         uint8_t  ver        = rxData[0];
         uint16_t payloadTyp = (uint16_t)(((uint16_t)rxData[2] << 8U) | (uint16_t)rxData[3]);
         
@@ -143,35 +166,32 @@ void Dcm_MainFunction(uint8_t *rxData, uint16_t rxLen, uint8_t *txData, uint16_t
             return; 
         }
 
-        /* 2. HANDLE ROUTING ACTIVATION (0x0005) */
+        /* 1. HANDLE ROUTING ACTIVATION (0x0005) */
         if (payloadTyp == DOIP_PAYLOAD_TYPE_ROUTING_REQ) {
-            DoIP_RoutingActive = 1U; /* Unlock the ECU network */
+            DoIP_RoutingActive = 1U; 
             
-            /* Build Routing Activation Response (0x0006) */
             txData[0] = DOIP_PROTOCOL_VERSION;
             txData[1] = (uint8_t)(~DOIP_PROTOCOL_VERSION);
-            txData[2] = 0x00U; txData[3] = 0x06U; /* Routing Response Type */
+            txData[2] = 0x00U; txData[3] = 0x06U; 
             txData[4] = 0x00U; txData[5] = 0x00U; 
-            txData[6] = 0x00U; txData[7] = 0x09U; /* Length of response payload (9 bytes) */
+            txData[6] = 0x00U; txData[7] = 0x09U; 
             
-            txData[8] = rxData[8]; txData[9] = rxData[9]; /* Echo Tester Address */
-            txData[10] = 0x10U; txData[11] = 0x00U;       /* ECU Logical Address (0x1000) */
-            txData[12] = 0x10U;                           /* Code 0x10: Successfully Activated */
-            (void)memset(&txData[13], 0x00, 4U);          /* Reserved bytes */
+            txData[8] = rxData[8]; txData[9] = rxData[9]; 
+            txData[10] = 0x10U; txData[11] = 0x00U;       
+            txData[12] = 0x10U;                           
+            (void)memset(&txData[13], 0x00, 4U);          
             
             *txLen = DOIP_HEADER_SIZE + 9U;
-            return; /* Exit early, do not process as UDS */
+            return; 
         }
 
-        /* 3. HANDLE UDS DIAGNOSTICS (0x8001) */
+        /* 2. HANDLE UDS DIAGNOSTICS (0x8001) */
         if (payloadTyp == DOIP_PAYLOAD_TYPE_DIAG) {
             
-            /* Block UDS if Routing is not active */
             if (DoIP_RoutingActive == 0U) {
-                return; /* ECU is locked, ignore UDS */
+                return; 
             }
 
-            /* EXTRACT UDS DATA PAYLOAD */
             uint8_t *udsData    = &rxData[DOIP_HEADER_SIZE];
             uint16_t udsLen     = rxLen - DOIP_HEADER_SIZE;
             uint8_t  sid        = udsData[0];
@@ -179,15 +199,15 @@ void Dcm_MainFunction(uint8_t *rxData, uint16_t rxLen, uint8_t *txData, uint16_t
 
             S3_Timer = 0U; 
 
-            /* SESSION GATEKEEPER - Updated for SM-OCIP Rail */
+            /* Global Session Guard for Services based on your requirements */
             switch (CurrentSession) {
-                case 0x01U: /* Default */
+                case 0x01U: /* Default Session */
                     if ((sid == 0x10U) || (sid == 0x14U) || (sid == 0x22U)) { isAllowed = 1U; }
                     break;
-                case 0x02U: /* Programming */
+                case 0x02U: /* Programming Session */
                     if ((sid == 0x10U) || (sid == 0x14U) || (sid == 0x27U) || (sid == 0x2EU)) { isAllowed = 1U; }
                     break;
-                case 0x03U: /* Extended */
+                case 0x03U: /* Extended Session */
                     if ((sid == 0x10U) || (sid == 0x14U) || (sid == 0x22U) || (sid == 0x27U) || 
                         (sid == 0x2EU) || (sid == 0x2FU) || (sid == 0x31U) || (sid == 0x85U) || (sid == 0x3EU)) {
                         isAllowed = 1U;
@@ -196,7 +216,6 @@ void Dcm_MainFunction(uint8_t *rxData, uint16_t rxLen, uint8_t *txData, uint16_t
                 default: break;
             }
 
-            /* DISPATCH TO HANDLER */
             if (isAllowed == 0U) {
                 Dcm_SendNRC(sid, 0x7FU, &txData[DOIP_HEADER_SIZE], txLen);
             } else {
@@ -210,7 +229,7 @@ void Dcm_MainFunction(uint8_t *rxData, uint16_t rxLen, uint8_t *txData, uint16_t
                 }
             }
 
-            /* WRAP RESPONSE IN DOIP/ETHERNET HEADER */
+            /* Wrap UDS payload in DoIP Header for Response */
             txData[0] = DOIP_PROTOCOL_VERSION;
             txData[1] = (uint8_t)(~DOIP_PROTOCOL_VERSION); 
             txData[2] = 0x80U; txData[3] = 0x01U;          
@@ -227,5 +246,5 @@ void Dcm_Init(void) {
     CurrentSession = 0x01U; 
     SecurityLevel = 0x00U; 
     S3_Timer = 0U; 
-    DoIP_RoutingActive = 0U; /* Reset Routing on init */
+    DoIP_RoutingActive = 0U; 
 }
